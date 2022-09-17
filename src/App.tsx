@@ -18,6 +18,32 @@ console.log('[App] MyComlinkWorker instance:', myComlinkWorkerInstance);
 myComlinkWorkerApi.createMessage('John Doe').then((message: string): void => {
   console.log('[App] MyComlinkWorker message:', message);
 });
+const SimpleStorageContact = `
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.4.16 <0.9.0;
+contract SimpleStorage {
+    uint storedData;
+    function set(uint x) public {
+        storedData = x;
+    }
+    function get() public view returns (uint) {
+        return storedData;
+    }
+}
+`;
+myComlinkWorkerApi.solidityCompiler({ command: '', content: SimpleStorageContact }).then((solcResult: string): void => {
+  // console.log(solcResult)
+  var output = JSON.parse(solcResult);
+
+  // `output` here contains the JSON output as specified in the documentation
+  for (var contractName in output.contracts['contract.sol']) {
+    console.log(
+      contractName +
+      ': ' +
+      JSON.stringify(output.contracts['contract.sol'][contractName].evm.bytecode)
+      , output.contracts['contract.sol'][contractName]);
+  }
+})
 
 function App() {
   return (
